@@ -198,6 +198,18 @@ nav.links a:hover { background: var(--cream); }
 .uses { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .uses li { display: grid; grid-template-columns: 116px 1fr; gap: 12px; align-items: baseline; background: rgba(255,255,255,.55); border-radius: 12px; padding: 10px 14px; }
 .uses b { font-family: var(--pixel); font-weight: 400; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+.printcard { color: var(--ink); scroll-margin-top: 96px; background: var(--cream); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 5px 6px 0 var(--ink); padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 14px; transform: rotate(-.6deg); }
+.printcard .pc-tag { align-self: flex-start; font-family: var(--pixel); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; background: var(--ink); color: var(--paper); padding: 5px 10px 4px; border-radius: 4px; }
+.how .printcard h3 { color: var(--ink); }
+.how-top { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; margin-bottom: 56px; }
+.how-top .head { margin-bottom: 0; }
+@media (max-width: 900px) { .how-top { grid-template-columns: 1fr; } }
+.printcard h3 { font-size: clamp(1.3rem, 2.4vw, 1.6rem); line-height: 1.12; }
+.printcard .pc-note { margin: 0; font-weight: 650; }
+.pc-tiers { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pc-tiers li { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: baseline; background: var(--sky-soft); border-radius: 12px; padding: 10px 14px; }
+.pc-tiers b { font-family: var(--pixel); font-weight: 400; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; color: var(--violet-deep); }
+.printcard .btn { align-self: flex-start; }
 .flip { perspective: 1600px; justify-self: center; width: min(100%, 470px); }
 .flip-inner { display: grid; transform-style: preserve-3d; transition: transform 1s cubic-bezier(.5,-0.2,.2,1.25); transform: rotate(-3deg); }
 .flip.flipped .flip-inner { transform: rotate(2deg) rotateY(180deg); }
@@ -223,7 +235,7 @@ nav.links a:hover { background: var(--cream); }
 .flip-wrap { display: flex; flex-direction: column; align-items: center; min-width: 0; }
 @keyframes nudge { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-5deg); } 86% { transform: rotate(4deg); } }
 @media (max-width: 880px) { .sample > .wrap { grid-template-columns: 1fr; } .flip-wrap { order: -1; } }
-@media (max-width: 440px) { .uses li { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 440px) { .uses li, .pc-tiers li { grid-template-columns: 1fr; gap: 2px; } }
 
 
 /* Edition tabs */
@@ -350,6 +362,22 @@ footer .credits a { text-decoration: underline; }
   .ticker, .handle-marquee { overflow-x: auto; }
   html { scroll-behavior: auto; }
 }
+
+/* Printed-copies popup */
+.pp-overlay { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(42, 29, 74, .62); }
+.pp-overlay.open { display: flex; }
+.pp-card { position: relative; width: 100%; max-width: 440px; background: var(--cream); color: var(--ink); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 7px 9px 0 var(--violet); padding: 30px 26px 26px; text-align: center; animation: ppIn .28s cubic-bezier(.3,1.5,.5,1); }
+@keyframes ppIn { from { transform: translateY(16px) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pp-card { animation: none; } }
+.pp-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; font-size: 1.5rem; line-height: 1; font-family: var(--display); color: var(--ink); background: transparent; border: 2px solid var(--ink); border-radius: 10px; cursor: pointer; }
+.pp-close:hover { background: var(--pink-soft); }
+.pp-tag { font-family: var(--pixel); font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--violet-deep); }
+.pp-card h3 { font-family: var(--display); font-weight: 650; font-size: 1.5rem; margin: 8px 0 8px; }
+.pp-card p { margin: 0 0 16px; font-size: 1rem; line-height: 1.45; }
+.pp-mail { display: block; font-family: var(--display); font-weight: 600; font-size: 1.1rem; word-break: break-all; background: #fff; border: 3px dashed var(--violet); border-radius: 12px; padding: 12px 10px; margin-bottom: 18px; user-select: all; }
+.pp-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.pp-actions .btn { font-size: 1rem; padding: 10px 16px; box-shadow: 3px 4px 0 var(--sh); }
+.pp-actions button.btn { font-family: var(--display); }
 </style>
 </head>
 <body>
@@ -472,9 +500,21 @@ footer .credits a { text-decoration: underline; }
   <section class="how band" id="register">
     <div class="tear"></div>
     <div class="wrap">
-      <div class="head">
-        <span class="tag">How it works</span>
-        <h2>Getting on board takes minutes.</h2>
+      <div class="how-top">
+        <div class="head">
+          <span class="tag">How it works</span>
+          <h2>Getting on board takes minutes.</h2>
+        </div>
+          <aside class="printcard rv" id="print" aria-labelledby="printTitle">
+            <span class="pc-tag">Prefer paper?</span>
+            <h3 id="printTitle">Printed copies, if your school would like them</h3>
+            <p class="pc-note">The digital paper stays 100% free, always. Printed copies are an optional extra.</p>
+            <ul class="pc-tiers">
+              <li><b>Right now</b><span>If your school is able to contribute, we can supply printed copies at a minimal charge.</span></li>
+              <li><b>Our goal</b><span>Completely free printed bundles for schools, once we have raised enough to fund them. That is what we are working towards right now.</span></li>
+            </ul>
+            <a class="btn violet" id="askPrint" href="mailto:thewonderwhy.press@gmail.com?subject=Printed%20copies%20of%20The%20WonderWhy%20Press" aria-haspopup="dialog">Ask about printed copies <span class="arr">&gt;</span></a>
+          </aside>
       </div>
       <ol class="steps">
         <li class="rv"><h3>Register</h3><p>Fill out the quick form so we know where the curiosity should go.</p></li>
@@ -666,6 +706,7 @@ footer .credits a { text-decoration: underline; }
         <li><a href="https://tally.so/r/kdr5po" target="_blank" rel="noopener">Register your school</a></li>
         <li><a href="https://tally.so/r/kdr5po" target="_blank" rel="noopener">Register your home</a></li>
         <li><a href="#samples">Read a sample</a></li>
+        <li><a href="#print">Printed copies</a></li>
       </ul>
     </div>
     <div>
@@ -833,6 +874,62 @@ footer .credits a { text-decoration: underline; }
   }
   init();
   var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { layoutFacts(); measure(); }, 150); });
+})();
+</script>
+
+<div class="pp-overlay" id="ppOverlay" role="dialog" aria-modal="true" aria-labelledby="ppTitle" aria-hidden="true">
+  <div class="pp-card">
+    <button type="button" class="pp-close" id="ppClose" aria-label="Close">&times;</button>
+    <span class="pp-tag">Printed copies</span>
+    <h3 id="ppTitle">Email us to ask</h3>
+    <p>Write to us at the address below and tell us your school and how many copies you would like.</p>
+    <span class="pp-mail" id="ppMail">thewonderwhy.press@gmail.com</span>
+    <div class="pp-actions">
+      <button type="button" class="btn violet" id="ppCopy">Copy email</button>
+      <a class="btn yellow" id="ppOpen" href="mailto:thewonderwhy.press@gmail.com?subject=Printed%20copies%20of%20The%20WonderWhy%20Press">Open in mail app</a>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var EMAIL = 'thewonderwhy.press@gmail.com';
+  var trigger = document.getElementById('askPrint');
+  var overlay = document.getElementById('ppOverlay');
+  var closeBtn = document.getElementById('ppClose');
+  var copyBtn = document.getElementById('ppCopy');
+  if (!trigger || !overlay) return;
+
+  function open() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    copyBtn.textContent = 'Copy email';
+    closeBtn.focus();
+  }
+  function close() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    trigger.focus();
+  }
+
+  trigger.addEventListener('click', function (e) { e.preventDefault(); open(); });
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+
+  copyBtn.addEventListener('click', function () {
+    function done() { copyBtn.textContent = 'Copied!'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(EMAIL).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var r = document.createRange();
+      r.selectNodeContents(document.getElementById('ppMail'));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      try { document.execCommand('copy'); done(); } catch (err) { copyBtn.textContent = 'Press Ctrl+C'; }
+    }
+  });
 })();
 </script>
 </body>
